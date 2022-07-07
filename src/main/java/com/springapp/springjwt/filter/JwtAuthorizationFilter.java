@@ -5,6 +5,7 @@ import com.springapp.springjwt.utility.JWTTokenProvider;
 import static com.springapp.springjwt.constant.SecurityConstant.*;
 import static org.springframework.http.HttpStatus.*;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,6 +25,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private JWTTokenProvider jwtTokenProvider;
 
+    @Autowired
     public JwtAuthorizationFilter(JWTTokenProvider jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;
     }
@@ -41,7 +43,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
             String token = authorizationHeader.substring(TOKEN_PREFIX.length());
             String username = jwtTokenProvider.getSubject(token);
-            if (jwtTokenProvider.isTokenValid(username,token) && SecurityContextHolder.getContext().getAuthentication() == null ){
+
+           if (jwtTokenProvider.isTokenValid(username,token) && SecurityContextHolder.getContext().getAuthentication() == null ){
                 List<GrantedAuthority> authorities = jwtTokenProvider.getAuthorities(token);
                 Authentication authentication = jwtTokenProvider.getAuthentication(username, authorities, request);
                 SecurityContextHolder.getContext().setAuthentication(authentication);

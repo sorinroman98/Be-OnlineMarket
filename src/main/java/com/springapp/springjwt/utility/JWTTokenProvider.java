@@ -2,16 +2,14 @@ package com.springapp.springjwt.utility;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
 
-import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
 import static com.springapp.springjwt.constant.SecurityConstant.*;
 import static java.util.Arrays.stream;
 
+import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.springapp.springjwt.domain.UserPrincipal;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -29,8 +27,8 @@ import java.util.stream.Collectors;
 @Component
 public class JWTTokenProvider {
 
-    @Value("${jwt.secret}")
-    private String secret;
+   // @Value("${jwt.secret}")
+    private String secret ="secret";
 
     public String generateJwtToken(UserPrincipal userPrincipal){
         String[] claims = getClaimsFromUser(userPrincipal);
@@ -38,7 +36,7 @@ public class JWTTokenProvider {
                 .withIssuedAt(new Date()).withSubject(userPrincipal.getUsername())
                 .withArrayClaim(AUTHORITIES,claims)
                 .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-                .sign(HMAC512(secret.getBytes()));
+                .sign(  Algorithm.HMAC512(secret));
     }
 
     public List<GrantedAuthority> getAuthorities(String token){
@@ -79,7 +77,7 @@ public class JWTTokenProvider {
     private JWTVerifier getJWTVerifier() {
         JWTVerifier verifier;
         try {
-            Algorithm algorithm = HMAC512(secret);
+            Algorithm algorithm = Algorithm.HMAC512(secret);
             verifier = JWT.require(algorithm).withIssuer(GET_ARRAYS_LLC).build();
         }catch (JWTVerificationException verificationException){
             throw new JWTVerificationException(TOKEN_CANNOT_BE_VERIFIED);
