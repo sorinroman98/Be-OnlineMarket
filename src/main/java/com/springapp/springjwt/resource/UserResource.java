@@ -21,25 +21,29 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Locale;
 
-import static com.springapp.springjwt.constant.FileConstant.FORWARD_SLASH;
-import static com.springapp.springjwt.constant.FileConstant.USER_FOLDER;
+import static com.springapp.springjwt.constant.FileConstant.*;
 import static com.springapp.springjwt.constant.SecurityConstant.JWT_TOKEN_HEADER;
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
 @RestController
 @RequestMapping(path ={ "/","/user"})
+@CrossOrigin("http://localhost:4200")
 public class UserResource extends ExceptionHandling {
     public static final String RESET_PASSWORD_EMAIL = "An email with a new password was sent to: ";
     public static final String USER_DELETED_SUCCESSFULLY = "User deleted successfully";
     private final UserService userService;
-    private final AuthenticationManager authenticationManager;
+    private AuthenticationManager authenticationManager;
     private final JWTTokenProvider jwtTokenProvider;
 
     @Autowired
@@ -58,6 +62,12 @@ public class UserResource extends ExceptionHandling {
         HttpHeaders jwtHeader = getJwtHeader(userPrincipal);
 
         return new ResponseEntity<>(loginUser, jwtHeader, OK);
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<User> register(@RequestBody NewUserDTORequest user) throws UserNotFoundException, EmailExistException, UsernameExistException, MessagingException {
+        User newUser = userService.register(user.getFirstName(),user.getLastName(),user.getUsername(), user.getEmail());
+        return new ResponseEntity<>(newUser, OK);
     }
 
     @PostMapping("/add")
@@ -106,7 +116,7 @@ public class UserResource extends ExceptionHandling {
         return new ResponseEntity<>(users,OK);
     }
 
-    @GetMapping("/resetPassword/{email}")
+    @GetMapping("/resetpassword/{email}")
     public ResponseEntity<HttpResponse> resetPassword(@PathVariable("email") String email) throws EmailNotFoundException, MessagingException {
         userService.resetPassword(email);
 
@@ -121,7 +131,7 @@ public class UserResource extends ExceptionHandling {
         return response(NO_CONTENT, USER_DELETED_SUCCESSFULLY);
     }
 
-    @PostMapping("/update")
+    @PostMapping("/updateProfileImage")
     public ResponseEntity<User> updateProfileImage(@RequestParam("username") String username,
                                                    @RequestParam(value = "profileImage")MultipartFile profileImage) throws UserNotFoundException, EmailExistException, IOException, UsernameExistException {
 
@@ -129,9 +139,23 @@ public class UserResource extends ExceptionHandling {
         return new ResponseEntity<>(user, OK);
     }
 
-    @GetMapping(value = "/image/{username}/{filename}",produces = IMAGE_JPEG_VALUE)
+    @GetMapping(path = "/image/{username}/{filename}",produces = IMAGE_JPEG_VALUE)
     public byte[] getProfileImage(@PathVariable("username") String username, @PathVariable("filename") String filename) throws IOException {
         return Files.readAllBytes(Paths.get(USER_FOLDER + username + FORWARD_SLASH + filename));
+    }
+
+    @GetMapping(path = "/image/profile/{username}",produces = IMAGE_JPEG_VALUE)
+    public byte[] getTempProfileImage(@PathVariable("username") String username) throws IOException {
+        URL url = new URL(TEMP_PROFILE_IMAGE_BASE_URL + username);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        try (InputStream inputStream = url.openStream()){
+            int bytesRead;
+            byte[] chunk = new byte[1024];
+            while ((bytesRead = inputStream.read(chunk)) > 0){
+                byteArrayOutputStream.write(chunk,0, bytesRead);
+            }
+        }
+        return byteArrayOutputStream.toByteArray();
     }
 
     private ResponseEntity<HttpResponse> response(HttpStatus httpStatus, String message) {
@@ -155,9 +179,5 @@ public class UserResource extends ExceptionHandling {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username,password));
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody NewUserDTORequest user) throws UserNotFoundException, EmailExistException, UsernameExistException, MessagingException {
-        User newUser = userService.register(user.getFirstName(),user.getLastName(),user.getUsername(), user.getEmail());
-        return new ResponseEntity<>(newUser, OK);
-    }
+
 }
