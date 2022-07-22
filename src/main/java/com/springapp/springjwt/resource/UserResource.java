@@ -71,32 +71,48 @@ public class UserResource extends ExceptionHandling {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<User> addNewUser(@RequestBody NewUserDTORequest userDTORequest) throws UserNotFoundException, EmailExistException, IOException, UsernameExistException {
-        User newUser = userService.addNewUser(userDTORequest.getFirstName(),
-                userDTORequest.getLastName(),
-                userDTORequest.getUsername(),
-                userDTORequest.getEmail(),
-                userDTORequest.getRole(),
-                userDTORequest.isNotLocked(),
-                userDTORequest.isActive(),
-                userDTORequest.getProfileImage()
-                );
+    public ResponseEntity<User> addNewUser(@RequestParam("firstName") String firstName,
+                                           @RequestParam("lastName") String lastName,
+                                           @RequestParam("username") String username,
+                                           @RequestParam("email") String email,
+                                           @RequestParam("role") String role,
+                                           @RequestParam ("isActive") String isActive,
+                                           @RequestParam("isNonLocked") String isNonLocked,
+                                           @RequestParam(value = "profileImage", required = false) MultipartFile profileImage
+                                           ) throws UserNotFoundException, EmailExistException, IOException, UsernameExistException, NotAnImageFileException {
+        User newUser = userService.addNewUser(
+                firstName,
+                lastName,
+                username,
+                email,
+                role,
+                Boolean.parseBoolean(isNonLocked),
+                Boolean.parseBoolean(isActive),
+                profileImage);
 
         return new ResponseEntity<>(newUser, OK);
     }
 
     @PostMapping("/update")
-    public ResponseEntity<User> update(@RequestBody UpdateUserDTORequest userDTORequest) throws UserNotFoundException, EmailExistException, IOException, UsernameExistException {
+    public ResponseEntity<User> update(@RequestParam("currentUsername") String currentUsername,
+                                       @RequestParam("firstName") String firstName,
+                                       @RequestParam("lastName") String lastName,
+                                       @RequestParam("username") String username,
+                                       @RequestParam("email") String email,
+                                       @RequestParam("role") String role,
+                                       @RequestParam ("isActive") String isActive,
+                                       @RequestParam("isNonLocked") String isNonLocked,
+                                       @RequestParam(value = "profileImage", required = false) MultipartFile profileImage) throws UserNotFoundException, EmailExistException, IOException, UsernameExistException, NotAnImageFileException {
         User updatedUser = userService.updateUser(
-                userDTORequest.getCurrentUsername(),
-                userDTORequest.getFirstName(),
-                userDTORequest.getLastName(),
-                userDTORequest.getUsername(),
-                userDTORequest.getEmail(),
-                userDTORequest.getRole(),
-                userDTORequest.isNotLocked(),
-                userDTORequest.isActive(),
-                userDTORequest.getProfileImage()
+                currentUsername,
+                firstName,
+                lastName,
+                username,
+                email,
+                role,
+                Boolean.parseBoolean(isNonLocked),
+                Boolean.parseBoolean(isActive),
+                profileImage
         );
 
         return new ResponseEntity<>(updatedUser, OK);
@@ -123,17 +139,17 @@ public class UserResource extends ExceptionHandling {
         return response(OK, RESET_PASSWORD_EMAIL + email);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/delete/{username}")
     @PreAuthorize("hasAnyAuthority('user:delete')")
-    public ResponseEntity<HttpResponse> deleteUser(@PathVariable("id") long id){
-        userService.deleteUser(id);
+    public ResponseEntity<HttpResponse> deleteUser(@PathVariable("username") String username) throws IOException {
+        userService.deleteUser(username);
 
-        return response(NO_CONTENT, USER_DELETED_SUCCESSFULLY);
+        return response(OK, USER_DELETED_SUCCESSFULLY);
     }
 
     @PostMapping("/updateProfileImage")
     public ResponseEntity<User> updateProfileImage(@RequestParam("username") String username,
-                                                   @RequestParam(value = "profileImage")MultipartFile profileImage) throws UserNotFoundException, EmailExistException, IOException, UsernameExistException {
+                                                   @RequestParam(value = "profileImage")MultipartFile profileImage) throws UserNotFoundException, EmailExistException, IOException, UsernameExistException, NotAnImageFileException {
 
         User user = userService.updateProfileImage(username,profileImage);
         return new ResponseEntity<>(user, OK);
