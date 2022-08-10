@@ -1,11 +1,10 @@
-package com.springapp.springjwt.resource;
+package com.springapp.springjwt.controller;
 
 import com.springapp.springjwt.domain.HttpResponse;
 import com.springapp.springjwt.domain.User;
 import com.springapp.springjwt.domain.UserPrincipal;
 import com.springapp.springjwt.exception.domain.*;
 import com.springapp.springjwt.modeldto.NewUserDTORequest;
-import com.springapp.springjwt.modeldto.UpdateUserDTORequest;
 import com.springapp.springjwt.modeldto.UserDTOLoginRequest;
 import com.springapp.springjwt.service.UserService;
 import com.springapp.springjwt.utility.JWTTokenProvider;
@@ -21,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,7 +37,7 @@ import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 @RestController
 @RequestMapping(path ={ "/","/user"})
 @CrossOrigin("http://localhost:4200")
-public class UserResource extends ExceptionHandling {
+public class UserResourceController extends ExceptionHandling {
     public static final String RESET_PASSWORD_EMAIL = "An email with a new password was sent to: ";
     public static final String USER_DELETED_SUCCESSFULLY = "User deleted successfully";
     private final UserService userService;
@@ -47,7 +45,7 @@ public class UserResource extends ExceptionHandling {
     private final JWTTokenProvider jwtTokenProvider;
 
     @Autowired
-    public UserResource(UserService userService, AuthenticationManager authenticationManager, JWTTokenProvider jwtTokenProvider) {
+    public UserResourceController(UserService userService, AuthenticationManager authenticationManager, JWTTokenProvider jwtTokenProvider) {
         this.userService = userService;
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;

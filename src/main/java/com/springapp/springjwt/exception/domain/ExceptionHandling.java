@@ -66,6 +66,52 @@ public class ExceptionHandling implements ErrorController {
         return createHttpResponse(HttpStatus.UNAUTHORIZED, ACCOUNT_LOCKED);
     }
 
+    @ExceptionHandler(OrderNotFoundException.class)
+    public ResponseEntity<HttpResponse> orderNotFoundException(OrderNotFoundException exception){
+        return createHttpResponse(HttpStatus.NO_CONTENT, exception.getMessage());
+    }
+
+    @ExceptionHandler(InvalidEmailFormatException.class)
+    public ResponseEntity<HttpResponse> invalidEmailFormatException(InvalidEmailFormatException exception){
+        return createHttpResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
+    }
+
+    @ExceptionHandler(InvalidUsernameFormatException.class)
+    public ResponseEntity<HttpResponse> invalidUsernameFormatException(InvalidUsernameFormatException exception){
+        return createHttpResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
+    }
+
+    @ExceptionHandler(InvalidOrderException.class)
+    public ResponseEntity<HttpResponse> invalidOrderException(InvalidOrderException exception){
+        return createHttpResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
+    }
+
+    @ExceptionHandler(ProductOutOfStockException.class)
+    public ResponseEntity<HttpResponse> productOutOfStockException(ProductOutOfStockException exception){
+        return createHttpResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
+    }
+
+
+    @ExceptionHandler(ProductRulesException.class)
+    public ResponseEntity<HttpResponse> productRulesException(ProductRulesException exception){
+        return createHttpResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
+    }
+
+    @ExceptionHandler(ProductNotFoundException.class)
+    public ResponseEntity<HttpResponse> productNotFoundException(ProductNotFoundException exception){
+        return createHttpResponse(HttpStatus.NO_CONTENT, exception.getMessage());
+    }
+
+    @ExceptionHandler(InvalidCreditCardException.class)
+    public ResponseEntity<HttpResponse> invalidCreditCardException(InvalidCreditCardException exception){
+        return createHttpResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
+    }
+
+    @ExceptionHandler(ActivationTokenException.class)
+    public ResponseEntity<HttpResponse> activationTokenExpiredException(ActivationTokenException exception){
+        return createHttpResponse(HttpStatus.UNAUTHORIZED, exception.getMessage().toUpperCase(Locale.ROOT));
+    }
+
     @ExceptionHandler(TokenExpiredException.class)
     public ResponseEntity<HttpResponse> tokenExpiredException(TokenExpiredException exception){
         return createHttpResponse(HttpStatus.UNAUTHORIZED, exception.getMessage().toUpperCase(Locale.ROOT));
