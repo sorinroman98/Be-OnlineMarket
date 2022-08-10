@@ -9,11 +9,9 @@ import com.springapp.springjwt.service.EmailService;
 import com.springapp.springjwt.service.LoginAttemptService;
 import com.springapp.springjwt.service.UserService;
 
-import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
-import org.aspectj.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -134,7 +132,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     private User validateNewUsernameAndEmail(String currentUsername,String newUsername, String newEmail)
-    throws UserNotFoundException, UsernameExistException, EmailExistException  {
+    throws UserNotFoundException, UsernameExistException, EmailExistException, NullPointerException  {
 
         User newUserByUsername = findByUsername(newUsername);
         User newUserByEmail = findUserByEmail(newEmail);

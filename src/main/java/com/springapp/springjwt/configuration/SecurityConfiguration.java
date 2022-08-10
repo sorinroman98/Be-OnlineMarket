@@ -37,6 +37,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private JwtAuthorizationFilter jwtAuthorizationFilter;
     private JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    public static final String ACCESS_CONTROL = "Access-Control";
+    public static final String ACCESS_CONTROL_ORIGIN = "Access-Control-Allow-Origin";
 
     @Autowired
     public SecurityConfiguration(@Qualifier("userDetailsService") UserDetailsService userDetailsService,
@@ -86,11 +88,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
-        corsConfiguration.setAllowedHeaders(Arrays.asList("Origin","Access-Control-Allow-Origin", "Content-Type",
+        corsConfiguration.setAllowedHeaders(Arrays.asList("Origin",ACCESS_CONTROL_ORIGIN, "Content-Type",
                 "Accept","Jwt-Token","Authorization","Origin, Accept", "X-Requested-With",
-                "Access-Control-Request-Method", "Access-Control-Request-Headers"));
+                ACCESS_CONTROL+"-Request-Method", ACCESS_CONTROL+"-Request-Headers"));
         corsConfiguration.setExposedHeaders(Arrays.asList("Origin","Content-Type", "Accept", "Jwt-Token","Authorization",
-                "Access-Control-Allow-Origin","Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"));
+                ACCESS_CONTROL_ORIGIN,ACCESS_CONTROL_ORIGIN, ACCESS_CONTROL+"-Allow-Credentials"));
         corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST","PUT","DELETE","OPTIONS"));
         urlBasedCorsConfigurationSource.registerCorsConfiguration("/**",corsConfiguration);
         return new CorsFilter(urlBasedCorsConfigurationSource);

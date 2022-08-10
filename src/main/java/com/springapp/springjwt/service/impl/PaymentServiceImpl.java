@@ -4,9 +4,7 @@ import com.springapp.springjwt.constant.ProductConstant;
 import com.springapp.springjwt.domain.CreditCard;
 import com.springapp.springjwt.domain.Order;
 import com.springapp.springjwt.domain.Product;
-import com.springapp.springjwt.exception.domain.InvalidOrderException;
-import com.springapp.springjwt.exception.domain.OrderNotFoundException;
-import com.springapp.springjwt.exception.domain.ProductOutOfStockException;
+import com.springapp.springjwt.exception.domain.*;
 import com.springapp.springjwt.repository.OrderRepository;
 import com.springapp.springjwt.repository.ProductRepository;
 import com.springapp.springjwt.service.PaymentService;
@@ -16,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.text.ParseException;
 import java.util.List;
 
 @Service
@@ -27,7 +26,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Transactional
     @Override
-    public void processOrder(String orderUuid, CreditCard creditCard) throws Exception {
+    public void processOrder(String orderUuid, CreditCard creditCard) throws ProductOutOfStockException, OrderNotFoundException, InvalidOrderException, InvalidCreditCardException, ParseException, InvalidUsernameFormatException {
 
         validator.validateOrder(orderUuid);
         validator.validateCreditCard(creditCard);

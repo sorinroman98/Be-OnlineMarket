@@ -31,7 +31,7 @@ public class Validator {
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
 
-    public void validateCreditCard(CreditCard creditCard) throws Exception {
+    public void validateCreditCard(CreditCard creditCard) throws InvalidCreditCardException, InvalidUsernameFormatException, ParseException {
 
         validateCreditCardNumberLength(creditCard.getCreditCardNumber());
         validateLuhnCreditCardAlgorithm(creditCard.getCreditCardNumber());
@@ -39,6 +39,12 @@ public class Validator {
         isValidName(creditCard.getCardHolderName());
         isValidDate(creditCard.getExpiryDate());
 
+    }
+
+    public void validateNewOrder(String username, List<String> productsId) throws ProductNotFoundException, InvalidOrderException {
+        validateProductsIdAndStock(productsId);
+        validateShoppingCartProducts(productsId);
+        validateUserOrder(username,productsId);
     }
 
     public void validateOrder(String orderUuid) throws InvalidOrderException, ProductOutOfStockException, OrderNotFoundException {
@@ -58,6 +64,11 @@ public class Validator {
         }
     }
 
+    public void validateNewUser(String username, String email) throws InvalidEmailFormatException, InvalidUsernameFormatException {
+        isValidEmailAddress(email);
+        isValidName(username);
+    }
+
     private void validateCreditCardNumberLength(String str) throws InvalidCreditCardException {
         if (str == null) {
             throw new InvalidCreditCardException(INVALID_CREDIT_CARD);
@@ -70,7 +81,7 @@ public class Validator {
 
     }
 
-    private boolean validateLuhnCreditCardAlgorithm(String str) throws InvalidCreditCardException {
+    private void validateLuhnCreditCardAlgorithm(String str) throws InvalidCreditCardException {
         try {
             int[] ints = new int[str.length()];
             for (int i = 0; i < str.length(); i++) {
@@ -88,10 +99,10 @@ public class Validator {
             for (int anInt : ints) {
                 sum += anInt;
             }
-            if (sum % 10 == 0) {
-                return true;
+            if (sum % 10 != 0) {
+                throw new InvalidCreditCardException(INVALID_CREDIT_CARD);
             }
-            throw new InvalidCreditCardException(INVALID_CREDIT_CARD);
+
         } catch (Exception e) {
            throw new InvalidCreditCardException(INVALID_CREDIT_CARD);
         }
@@ -159,13 +170,17 @@ public class Validator {
 
     }
 
-    private void validateProductsId(List<String> idProductsList) throws ProductNotFoundException {
+    private void validateProductsIdAndStock(List<String> idProductsList) throws ProductNotFoundException {
         if (idProductsList == null) {
             throw new ProductNotFoundException(PRODUCT_NOT_FOUND);
         }
         for (String idProduct : idProductsList) {
             if (productRepository.findByUuid(idProduct) == null) {
                 throw new ProductNotFoundException(PRODUCT_NOT_FOUND);
+            }
+
+            if (productRepository.findByUuid(idProduct).getQuantity() < 1) {
+                throw new ProductNotFoundException(PRODUCT_OUT_OF_STOCK);
             }
         }
     }
@@ -188,20 +203,9 @@ public class Validator {
 
     }
 
-    private void validateStock(List<String> idProductsList) throws ProductNotFoundException {
-        if (idProductsList == null) {
-            throw new ProductNotFoundException(PRODUCT_NOT_FOUND);
-        }
-
-        for (String s : idProductsList) {
-            if (productRepository.findByUuid(s).getQuantity() < 1) {
-                throw new ProductNotFoundException(PRODUCT_NOT_FOUND);
-            }
-        }
-    }
 
     //Validate if the user has bought a product from same category in other orders
-    private void validateUserOrder(String userName, List<String> productsList) throws InvalidOrderException {
+    public void validateUserOrder(String userName, List<String> productsList) throws InvalidOrderException {
         if (userName == null || productsList == null || productsList.isEmpty()) {
          throw new InvalidOrderException("INVALID");
         }
