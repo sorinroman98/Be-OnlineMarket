@@ -50,7 +50,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product editProduct(Product product) throws ProductNotFoundException {
+    public Product updateProduct(Product product) throws ProductNotFoundException {
         if(product == null) {
             throw new ProductNotFoundException(PRODUCT_NOT_FOUND);
         }

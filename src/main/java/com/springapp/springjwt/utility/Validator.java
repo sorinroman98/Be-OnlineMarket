@@ -17,7 +17,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.IntStream;
 
 import static com.springapp.springjwt.constant.CreditCardConstants.INVALID_CREDIT_CARD;
 import static com.springapp.springjwt.constant.EmailConstant.INVALID_EMAIL_FORMAT;

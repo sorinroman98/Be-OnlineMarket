@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -51,11 +50,11 @@ public class ProductResourceController {
 
     }
 
-    @PostMapping("/edit")
+    @PostMapping("/update")
     @ResponseBody
-    public ResponseEntity<Product> editProductDb(@RequestBody Product product) throws ProductNotFoundException {
+    public ResponseEntity<Product> updateProductDb(@RequestBody Product product) throws ProductNotFoundException {
 
-        return new ResponseEntity<>(productService.editProduct(product), HttpStatus.OK);
+        return new ResponseEntity<>(productService.updateProduct(product), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{productUuid}")

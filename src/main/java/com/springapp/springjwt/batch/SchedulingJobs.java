@@ -7,7 +7,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 public class SchedulingJobs {
 
 
-    private final transient VerificationTokenProvider verificationToken;
+    private final VerificationTokenProvider verificationToken;
 
     @Autowired
     public SchedulingJobs(VerificationTokenProvider verificationToken) {

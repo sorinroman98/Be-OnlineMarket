@@ -32,13 +32,13 @@ public class Product implements Serializable {
     @Column(name = "discount")
     private int discount;
     @Column(name = "likes_count")
-    private String likes_count;
+    private String likesCount;
     @Column(name = "model")
     private String model;
     @Column(name = "description")
     private String description;
     @Column(name = "image_url")
-    private String image_url;
+    private String imageUrl;
     @Column(name = "quantity")
     private int quantity;
 

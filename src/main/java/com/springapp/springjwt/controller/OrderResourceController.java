@@ -3,9 +3,7 @@ package com.springapp.springjwt.controller;
 import com.springapp.springjwt.domain.CreditCard;
 import com.springapp.springjwt.domain.Order;
 import com.springapp.springjwt.domain.Product;
-import com.springapp.springjwt.exception.domain.InvalidOrderException;
-import com.springapp.springjwt.exception.domain.OrderNotFoundException;
-import com.springapp.springjwt.exception.domain.ProductNotFoundException;
+import com.springapp.springjwt.exception.domain.*;
 import com.springapp.springjwt.service.OrderService;
 import com.springapp.springjwt.service.PaymentService;
 import org.json.JSONObject;
@@ -14,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.List;
 
 @RestController
@@ -45,7 +44,7 @@ public class OrderResourceController {
     }
 
     @PostMapping("/pay")
-    public ResponseEntity<Order> payOrderDba(@RequestBody Order order, @RequestBody CreditCard creditCard) throws Exception {
+    public ResponseEntity<Order> payOrderDba(@RequestBody Order order, @RequestBody CreditCard creditCard) throws ProductOutOfStockException, OrderNotFoundException, InvalidOrderException, InvalidCreditCardException, ParseException, InvalidUsernameFormatException {
        paymentService.processOrder(order.getOrderUuid(), creditCard);
        return new ResponseEntity<>(order, HttpStatus.OK);
     }

@@ -8,6 +8,6 @@ public class AsyncException  implements AsyncUncaughtExceptionHandler {
 
     @Override
     public void handleUncaughtException(Throwable throwable, Method method, Object... obj) {
-
+        throw new UnsupportedOperationException();
     }
 }
