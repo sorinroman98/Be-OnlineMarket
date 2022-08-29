@@ -71,7 +71,7 @@ public class OrderServiceImpl implements OrderService {
 
 
         if (order == null){
-            //Create new order with received product
+            //Create new order with received product if it's note exist an order, or existing order is noy paid
 
             validator.validateNewOrder(username,Arrays.asList(productUuid));
             List<Product> products = productService.getProductsById(Arrays.asList(productUuid));
@@ -90,6 +90,11 @@ public class OrderServiceImpl implements OrderService {
         }else {
 
             validator.validateNewOrder(username, Collections.singletonList(productUuid));
+//            order.getProductList().stream()
+//                    .filter( a -> a.getUuid().compareTo(productUuid) == 0)
+//                    .findAny()
+//                    .ifPresent(a -> a.setQuantity(a.getQuantity()+1));
+
             order.getProductList().add(productService.getProductByUuid(productUuid));
             orderRepository.save(order);
         }
@@ -106,7 +111,7 @@ public class OrderServiceImpl implements OrderService {
 
        if (order == null)
             return null;
-        else
+
             return order.getOrderUuid();
     }
 }

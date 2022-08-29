@@ -43,7 +43,7 @@ public class Validator {
 
     public void validateNewOrder(String username, List<String> productsId) throws ProductNotFoundException, InvalidOrderException {
         validateProductsIdAndStock(productsId);
-        validateShoppingCartProducts(productsId);
+        //validateShoppingCartProducts(productsId);
         validateUserOrder(username,productsId);
     }
 
@@ -185,23 +185,23 @@ public class Validator {
         }
     }
 
-    private void validateShoppingCartProducts(List<String> idProductsList) throws ProductNotFoundException {
-        if (idProductsList == null) {
-            throw new ProductNotFoundException(PRODUCT_NOT_FOUND);
-        }
-
-
-
-        for (int i = 0; i < idProductsList.size(); i++) {
-            for (int j = i + 1; j < idProductsList.size(); j++) {
-                if (productRepository.findByUuid(idProductsList.get(i)).getCategory()
-                        .equals(productRepository.findByUuid(idProductsList.get(j)).getCategory())) {
-                    throw new ProductNotFoundException(INVALID_PRODUCT_LIST);
-                }
-            }
-        }
-
-    }
+//    private void validateShoppingCartProducts(List<String> idProductsList) throws ProductNotFoundException {
+//        if (idProductsList == null) {
+//            throw new ProductNotFoundException(PRODUCT_NOT_FOUND);
+//        }
+//
+//
+////Wrong
+//        for (int i = 0; i < idProductsList.size(); i++) {
+//            for (int j = i + 1; j < idProductsList.size(); j++) {
+//                if (productRepository.findByUuid(idProductsList.get(i)).getCategory()
+//                        .equals(productRepository.findByUuid(idProductsList.get(j)).getCategory())) {
+//                    throw new ProductNotFoundException(INVALID_PRODUCT_LIST);
+//                }
+//            }
+//        }
+//
+//    }
 
 
     //Validate if the user has bought a product from same category in other orders
@@ -209,20 +209,22 @@ public class Validator {
         if (userName == null || productsList == null || productsList.isEmpty()) {
          throw new InvalidOrderException("INVALID");
         }
-        List<Order> ordersDatabaseList = orderRepository.findAll();
-        for (Order order : ordersDatabaseList) {
-            if (userName.equals(order.getUserName())) {
-                IntStream.range(0, productsList.size()).filter(j -> IntStream.range(0, order.getProductList().size()).anyMatch(k -> productRepository.findByUuid(productsList.get(j)).getCategory()
-                        .equals(productRepository.findByUuid(order.getProductList().get(k).getUuid()).getCategory()))).forEach(j -> {
-                    try {
-                        throw new InvalidOrderException(INVALID_PRODUCTS_IN_ORDER);
-                    } catch (InvalidOrderException e) {
-                        e.printStackTrace();
-                    }
 
-                });
-            }
-        }
+//        List<Order> ordersDatabaseList = orderRepository.findAll();
+//
+//        for (Order order : ordersDatabaseList) {
+//            if (userName.equals(order.getUserName())) {
+//                IntStream.range(0, productsList.size()).filter(j -> IntStream.range(0, order.getProductList().size()).anyMatch(k -> productRepository.findByUuid(productsList.get(j)).getCategory()
+//                        .equals(productRepository.findByUuid(order.getProductList().get(k).getUuid()).getCategory()))).forEach(j -> {
+//                    try {
+//                        throw new InvalidOrderException(INVALID_PRODUCTS_IN_ORDER);
+//                    } catch (InvalidOrderException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                });
+//            }
+//        }
 
     }
 }

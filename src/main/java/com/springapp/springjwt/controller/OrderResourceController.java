@@ -18,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/order")
-
+@CrossOrigin("http://localhost:4200")
 public class OrderResourceController {
     private final OrderService orderService;
     private final PaymentService paymentService;
@@ -36,10 +36,12 @@ public class OrderResourceController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Order> insertOrderDba(@RequestBody Order order) {
+    public ResponseEntity<Order> insertOrderDba(@RequestParam String productUuid,
+                                                @RequestParam String email, @RequestParam String username) throws InvalidOrderException, ProductNotFoundException {
 
+        orderService.addProductToOrder(productUuid,email,username);
 
-        return new ResponseEntity<>(order, HttpStatus.OK);
+        return new ResponseEntity<>( HttpStatus.OK);
     }
 
     @PostMapping("/pay")

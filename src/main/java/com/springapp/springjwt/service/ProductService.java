@@ -15,4 +15,6 @@ public interface ProductService {
     Product getProductByUuid(String uuid);
 
     public Product editProduct(Product product) throws ProductNotFoundException;
+
+    void deleteProduct(String productUuid) throws ProductNotFoundException;
 }

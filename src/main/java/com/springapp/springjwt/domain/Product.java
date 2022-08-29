@@ -1,5 +1,6 @@
 package com.springapp.springjwt.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,16 +21,29 @@ public class Product implements Serializable {
     private String uuid;
     @Column(name = "category")
     private String category;
+    @Column(name = "subcategory")
+    private String subcategory;
     @Column(name = "product_name")
     private String productName;
     @Column(name = "price")
     private double price;
-    @Column(name = "issues")
-    private String issues;
+    @Column(name = "currency")
+    private String currency;
+    @Column(name = "discount")
+    private int discount;
+    @Column(name = "likes_count")
+    private String likes_count;
+    @Column(name = "model")
+    private String model;
+    @Column(name = "description")
+    private String description;
+    @Column(name = "image_url")
+    private String image_url;
     @Column(name = "quantity")
     private int quantity;
 
     @ManyToMany(mappedBy = "productList")
+    @JsonIgnore
     private List<Order> orderList = new ArrayList<>();
 
 }

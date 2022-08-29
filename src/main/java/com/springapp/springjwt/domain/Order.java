@@ -1,5 +1,6 @@
 package com.springapp.springjwt.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@Table(name = "order_table")
 public class Order implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -32,11 +34,12 @@ public class Order implements Serializable {
     @Column(name = "totalAmount")
     private double totalAmount;
 
+
     @ManyToMany()
     @JoinTable(
             name = "order_list",
-            joinColumns = @JoinColumn(name = "order_uuid", referencedColumnName = "order_uuid"),
-            inverseJoinColumns = @JoinColumn(name = "product_uuid", referencedColumnName = "product_uuid")
+            joinColumns = @JoinColumn(name = "order_Uuid", referencedColumnName = "order_uuid"),
+            inverseJoinColumns = @JoinColumn(name = "product_Uuid", referencedColumnName = "product_uuid")
     )
     private List<Product> productList = new ArrayList<>();
 

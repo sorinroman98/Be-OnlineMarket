@@ -57,4 +57,13 @@ public class ProductServiceImpl implements ProductService {
 
         return productRepository.save(product);
     }
+
+    @Override
+    public void deleteProduct(String productUuid) throws ProductNotFoundException {
+        Product product = productRepository.findByUuid(productUuid);
+        if (product != null){
+            productRepository.delete(product);
+        }
+        throw new ProductNotFoundException(PRODUCT_NOT_FOUND);
+    }
 }
