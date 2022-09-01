@@ -9,11 +9,13 @@ import static java.util.Arrays.stream;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.springapp.springjwt.domain.UserPrincipal;
+import lombok.var;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 
@@ -29,6 +31,15 @@ public class JWTTokenProvider {
 
    // @Value("${jwt.secret}")
     private String secret ="secret";
+    public static String getPrincipal() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            return authentication.getPrincipal().toString();
+        } else {
+            throw new JWTVerificationException("User is not authenticated!");
+        }
+
+    }
 
     public String generateJwtToken(UserPrincipal userPrincipal){
         String[] claims = getClaimsFromUser(userPrincipal);

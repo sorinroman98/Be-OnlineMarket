@@ -2,18 +2,16 @@ package com.springapp.springjwt.service.impl;
 
 import com.springapp.springjwt.domain.Order;
 import com.springapp.springjwt.domain.Product;
-import com.springapp.springjwt.domain.User;
 import com.springapp.springjwt.exception.domain.InvalidOrderException;
 import com.springapp.springjwt.exception.domain.OrderNotFoundException;
 import com.springapp.springjwt.exception.domain.ProductNotFoundException;
-import com.springapp.springjwt.exception.domain.ProductOutOfStockException;
 import com.springapp.springjwt.repository.OrderRepository;
 import com.springapp.springjwt.repository.ProductRepository;
+import com.springapp.springjwt.repository.UserRepository;
 import com.springapp.springjwt.service.OrderService;
 import com.springapp.springjwt.service.ProductService;
 import com.springapp.springjwt.utility.Validator;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +25,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final ProductService productService;
+    private final UserRepository userRepository;
 
     @Override
     public List<Order> getAll() {
@@ -63,11 +62,11 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public void addProductToOrder(String productUuid, String email, String username) throws ProductNotFoundException, InvalidOrderException {
+    public void addProductToOrder(String productUuid, String username) throws ProductNotFoundException, InvalidOrderException {
 
         //Check if exist an order
-        Order order = orderRepository.findOrderByNameAndStatus(username, false,email);
-
+        Order order = orderRepository.findOrderByNameAndStatus(username, false);
+        String email = userRepository.findByUsername(username).getEmail();
 
 
         if (order == null){
@@ -101,13 +100,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Product> getProductsFromOrder(String name, String email) {
-        return orderRepository.findOrderByNameAndStatus(name,false,email).getProductList();
+    public List<Product> getProductsFromOrder(String name) {
+        return orderRepository.findOrderByNameAndStatus(name,false).getProductList();
     }
 
     @Override
-    public String getOrderId(String name, String email) {
-        Order order = orderRepository.findOrderByNameAndStatus(name,false,email);
+    public String getOrderId(String name) {
+        Order order = orderRepository.findOrderByNameAndStatus(name,false);
 
        if (order == null)
             return null;

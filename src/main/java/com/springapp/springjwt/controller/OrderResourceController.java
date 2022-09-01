@@ -6,10 +6,12 @@ import com.springapp.springjwt.domain.Product;
 import com.springapp.springjwt.exception.domain.*;
 import com.springapp.springjwt.service.OrderService;
 import com.springapp.springjwt.service.PaymentService;
+import com.springapp.springjwt.utility.JWTTokenProvider;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
@@ -29,22 +31,22 @@ public class OrderResourceController {
     }
 
     @GetMapping("/getAll")
+    @PreAuthorize("hasAnyAuthority('user:read')")
     public List<Order> getAllOrders() {
 
         return orderService.getAll();
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Order> insertOrderDba(@RequestParam String productUuid,
-                                                @RequestParam String email, @RequestParam String username) throws InvalidOrderException, ProductNotFoundException {
+    public ResponseEntity<Order> createOrder(@RequestParam String productUuid) throws InvalidOrderException, ProductNotFoundException {
 
-        orderService.addProductToOrder(productUuid,email,username);
+        orderService.addProductToOrder(productUuid,JWTTokenProvider.getPrincipal());
 
         return new ResponseEntity<>( HttpStatus.OK);
     }
 
     @PostMapping("/pay")
-    public ResponseEntity<Order> payOrderDba(@RequestBody Order order, @RequestBody CreditCard creditCard) throws ProductOutOfStockException, OrderNotFoundException, InvalidOrderException, InvalidCreditCardException, ParseException, InvalidUsernameFormatException {
+    public ResponseEntity<Order> payOrder(@RequestBody Order order, @RequestBody CreditCard creditCard) throws ProductOutOfStockException, OrderNotFoundException, InvalidOrderException, InvalidCreditCardException, ParseException, InvalidUsernameFormatException {
        paymentService.processOrder(order.getOrderUuid(), creditCard);
        return new ResponseEntity<>(order, HttpStatus.OK);
     }
@@ -56,17 +58,17 @@ public class OrderResourceController {
     }
 
     @GetMapping("/deleteById")
+    @PreAuthorize("hasAnyAuthority('user:delete')")
     public ResponseEntity<String> deleteOrderByUuid(@RequestParam String uuid) {
 
             orderService.deleteOrderByUuid(uuid);
 
             return new ResponseEntity<>(JSONObject.quote("Successfully"), HttpStatus.OK);
     }
-
+    //Add product to order, user it's get from jwt token provided by header
     @PostMapping("/addProductToOrder")
-    public ResponseEntity<String> addProductToExistingOrder(@RequestParam String productUuid,
-                                                            @RequestParam String email, @RequestParam String username) throws InvalidOrderException, ProductNotFoundException {
-        orderService.addProductToOrder(productUuid,email,username);
+    public ResponseEntity<String> addProductToExistingOrder(@RequestParam String productUuid) throws InvalidOrderException, ProductNotFoundException {
+        orderService.addProductToOrder(productUuid,JWTTokenProvider.getPrincipal());
         return new ResponseEntity<>(JSONObject.quote("Successfully added!"), HttpStatus.OK);
     }
 
@@ -79,7 +81,7 @@ public class OrderResourceController {
 
     @GetMapping("/getProductsFromOrder")
     public ResponseEntity<List<Product>> getProductsFromOrder(@RequestParam String name, @RequestParam String email) throws OrderNotFoundException {
-     List<Product> products = orderService.getProductsFromOrder(name,email);
+     List<Product> products = orderService.getProductsFromOrder(name);
         if (products == null){
             throw new OrderNotFoundException("Order not found or products list it's empty!");
         }
@@ -89,7 +91,7 @@ public class OrderResourceController {
 
     @GetMapping("/getOrderId")
     public ResponseEntity<String> getOrderId(@RequestParam String username, @RequestParam String email) throws OrderNotFoundException {
-        String orderUuid = orderService.getOrderId(username,email);
+        String orderUuid = orderService.getOrderId(username);
 
         if (orderUuid == null){
             throw new OrderNotFoundException("Order not found!");

@@ -124,6 +124,7 @@ public class UserResourceController extends ExceptionHandling {
     }
 
     @GetMapping("/list")
+
     public ResponseEntity<List<User>> getAllUsers(){
         List<User> users = userService.getUsers();
 

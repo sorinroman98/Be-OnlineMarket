@@ -32,19 +32,22 @@ public class ProductResourceController {
 
     @PostMapping("/add")
     @ResponseBody
-    public ResponseEntity<Product> insertProductDb(@RequestBody Product product) {
+    @PreAuthorize("hasAnyAuthority('user:create')")
+    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
         product.setUuid(UUID.randomUUID().toString());
         return new ResponseEntity<>(productService.save(product), HttpStatus.OK);
     }
 
     @GetMapping("/getAll")
-    public List<Product> returnProductListDb() {
+    @PreAuthorize("hasAnyAuthority('user:read')")
+    public List<Product> getAllProducts() {
 
         return productService.getAll();
     }
 
-        @GetMapping("/getByUuid")
-    public Product returnProductDb(@RequestParam String uuid) {
+    @GetMapping("/getByUuid")
+    @PreAuthorize("hasAnyAuthority('user:delete')")
+    public Product getProductByUuid(@RequestParam String uuid) {
 
         return productService.getProductByUuid(uuid);
 
@@ -52,7 +55,8 @@ public class ProductResourceController {
 
     @PostMapping("/update")
     @ResponseBody
-    public ResponseEntity<Product> updateProductDb(@RequestBody Product product) throws ProductNotFoundException {
+    @PreAuthorize("hasAnyAuthority('user:update')")
+    public ResponseEntity<Product> updateProduct(@RequestBody Product product) throws ProductNotFoundException {
 
         return new ResponseEntity<>(productService.updateProduct(product), HttpStatus.OK);
     }

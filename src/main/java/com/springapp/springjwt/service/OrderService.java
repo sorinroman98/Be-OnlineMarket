@@ -16,11 +16,11 @@ public interface OrderService {
 
     void deleteOrderByUuid(String uuid);
 
-    void addProductToOrder(String productUuid, String email, String username) throws ProductNotFoundException, InvalidOrderException;
+    void addProductToOrder(String productUuid, String username) throws ProductNotFoundException, InvalidOrderException;
 
-    boolean removeProductFromOrder(String orderUuid, String productUuid, String name) throws OrderNotFoundException;
+    boolean removeProductFromOrder(String orderUuid, String username, String productUuid) throws OrderNotFoundException;
 
-    List<Product> getProductsFromOrder(String name, String email);
+    List<Product> getProductsFromOrder(String name);
 
-    String getOrderId(String name, String email);
+    String getOrderId(String name);
 }
