@@ -57,8 +57,7 @@ public class OrderResourceController {
         return orderService.getOrderByUuid(uuid);
     }
 
-    @GetMapping("/deleteById")
-    @PreAuthorize("hasAnyAuthority('user:delete')")
+    @DeleteMapping("/deleteById")
     public ResponseEntity<String> deleteOrderByUuid(@RequestParam String uuid) {
 
             orderService.deleteOrderByUuid(uuid);

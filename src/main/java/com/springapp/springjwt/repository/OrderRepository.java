@@ -13,8 +13,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("FROM Order WHERE orderUuid = ?1")
     Order findOrderById(String orderId);
 
+    @Modifying
     @Query("delete FROM Order WHERE orderUuid = ?1")
-    Order deleteOrderById(String orderId);
+    void deleteOrderById(String orderId);
 
     @Query("FROM Order WHERE userName = ?1 AND isPayed = ?2")
     Order findOrderByNameAndStatus(String username, Boolean isPaid);
